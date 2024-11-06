@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Asclepius</string>
+    <string name="gallery">Gallery</string>
+    <string name="analyze">Analyze</string>
+    <string name="result">Result</string>
+    <string name="title_detect">Detect</string>
+    <string name="title_article">Article</string>
+    <string name="title_history">History</string>
+    <string name="text1">Cancer Detector</string>
+    <string name="text2">Analyze Your Skin in Just One Click!</string>
+    <string name="empty_image_warning">Please insert the image file first.</string>
+
+</resources>
