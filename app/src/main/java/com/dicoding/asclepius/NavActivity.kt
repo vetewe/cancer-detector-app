@@ -1,6 +1,5 @@
 package com.dicoding.asclepius
 
-import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +8,6 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.dicoding.asclepius.databinding.ActivityNavBinding
-import com.dicoding.asclepius.view.MainActivity
 
 class NavActivity : AppCompatActivity() {
 
@@ -27,15 +25,11 @@ class NavActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_nav)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_article,
+                R.id.navigation_home,
                 R.id.navigation_history
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        binding.detectLayout.setOnClickListener{
-            startActivity(Intent(this@NavActivity, MainActivity::class.java))
-        }
     }
 }

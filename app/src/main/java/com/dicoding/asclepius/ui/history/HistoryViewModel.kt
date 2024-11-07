@@ -1,13 +1,16 @@
-package com.dicoding.asclepius.ui.history
+package com.dicoding.asclepius.view.ui.history
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.dicoding.asclepius.data.local.entity.ResultEntity
+import com.dicoding.asclepius.data.repository.ResultRepository
 
-class HistoryViewModel : ViewModel() {
+class HistoryViewModel(
+    private val analyzeResultRepository: ResultRepository
+) : ViewModel() {
+    fun getAnalyzeResult() = analyzeResultRepository.showAnalyzeResult()
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+    fun removeAnalyzeResult(analyzeResultEntity: ResultEntity) {
+        analyzeResultRepository.removeAnalyzeResult(analyzeResultEntity)
     }
-    val text: LiveData<String> = _text
+
 }

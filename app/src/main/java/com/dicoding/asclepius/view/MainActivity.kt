@@ -1,94 +1,145 @@
 package com.dicoding.asclepius.view
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import com.dicoding.asclepius.R
 import com.dicoding.asclepius.databinding.ActivityMainBinding
-import com.google.gson.Gson
-import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MultipartBody
-import retrofit2.HttpException
+import com.dicoding.asclepius.helper.ImageClassifierHelper
+import com.yalantis.ucrop.UCrop
+import com.yalantis.ucrop.UCropActivity
+import org.tensorflow.lite.task.vision.classifier.Classifications
+import java.io.File
+import java.text.NumberFormat
+import java.util.UUID
 
+@Suppress("DEPRECATION")
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     private var currentImageUri: Uri? = null
-
-    private val requestPermissionLauncher =
-        registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                Toast.makeText(this, "Permission request granted", Toast.LENGTH_LONG).show()
-            } else {
-                Toast.makeText(this, "Permission request denied", Toast.LENGTH_LONG).show()
-            }
-        }
-
-    private fun allPermissionsGranted() =
-        ContextCompat.checkSelfPermission(
-            this,
-            REQUIRED_PERMISSION
-        ) == PackageManager.PERMISSION_GRANTED
+    private var resultAnalyze: String? = null
+    private lateinit var imageClassifierHelper: ImageClassifierHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        if (savedInstanceState != null) {
+            currentImageUri = savedInstanceState.getParcelable("current_image_uri")
+            showImage()
+        }
 
         supportActionBar?.hide()
 
-        if (!allPermissionsGranted()) {
-            requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+        binding.galleryButton.setOnClickListener {
+            startGallery()
         }
+        binding.analyzeButton.setOnClickListener {
+            analyzeImage()
+        }
+    }
 
-        binding.galleryButton.setOnClickListener { startGallery() }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable("current_image_uri", currentImageUri)
+    }
+
+    @Deprecated("Deprecated in Java")
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == UCrop.REQUEST_CROP) {
+            currentImageUri = UCrop.getOutput(data!!)
+            showImage()
+        } else if (resultCode == UCrop.RESULT_ERROR) {
+            val cropError = UCrop.getError(data!!)
+            Log.d(getString(R.string.text14), "showImage: $cropError")
+            showToast(getString(R.string.text14))
+        }
     }
 
     private fun startGallery() {
-        launcherGallery.launch("image/*")
+        launchGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    private val launcherGallery = registerForActivityResult(
-        ActivityResultContracts.GetContent()
+    private val launchGallery = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
     ) { uri: Uri? ->
         if (uri != null) {
             currentImageUri = uri
+            launchUCrop(uri)
             showImage()
         } else {
-            Log.d("Photo Picker", "No media selected")
+            Log.d("Photo Picker", getString(R.string.text15))
         }
+    }
+
+    private fun launchUCrop(uri: Uri) {
+        val destinationFileName = "${UUID.randomUUID()}.jpg"
+        val destinationUri = Uri.fromFile(File(filesDir, destinationFileName))
+
+        val options = UCrop.Options()
+        options.setCompressionQuality(100)
+        options.setFreeStyleCropEnabled(true)
+        options.setAllowedGestures(UCropActivity.SCALE, UCropActivity.ROTATE, UCropActivity.ALL)
+
+        UCrop.of(uri, destinationUri)
+            .withOptions(options)
+            .withAspectRatio(0f, 0f)
+            .useSourceImageAspectRatio()
+            .withMaxResultSize(3000, 3000)
+            .start(this)
     }
 
     private fun showImage() {
         currentImageUri?.let {
-            Log.d("Image URI", "showImage: $it")
+            Log.d("URI Image", "showImage: $it")
             binding.previewImageView.setImageURI(it)
         }
     }
 
     private fun analyzeImage() {
-        currentImageUri?.let { uri ->
-            val result = imageClassifierHelper.classifyStaticImage(uri)
-            moveToResult(result)
+        if (currentImageUri != null) {
+            imageClassifierHelper = ImageClassifierHelper(
+                context = this,
+                classifierListener = object : ImageClassifierHelper.ClassifierListener {
+                    override fun onError(error: String) {
+                        showToast(error)
+                    }
+
+                    override fun onResults(result: List<Classifications>?) {
+                        result?.let { it ->
+                            println(it)
+                            val sortedCategory =
+                                it[0].categories.sortedByDescending { it?.score }
+                            val displayResult =
+                                sortedCategory.joinToString("\n") {
+                                    "${it.label}\n" + NumberFormat.getPercentInstance()
+                                        .format(it.score).trim()
+                                }
+                            resultAnalyze = displayResult
+                            moveToResult()
+                        }
+                    }
+
+                }
+            )
+            currentImageUri?.let { imageClassifierHelper.classifyStaticImage(it) }
+        } else {
+            showToast(getString(R.string.text16))
         }
     }
 
-    private fun moveToResult(result: String) {
-        val intent = Intent(this, ResultActivity::class.java).apply {
-            putExtra("result", result)
-        }
+    private fun moveToResult() {
+        val intent = Intent(this, ResultActivity::class.java)
+        intent.putExtra(EXTRA_IMAGE, currentImageUri)
+        intent.putExtra(EXTRA_RESULT, resultAnalyze)
         startActivity(intent)
     }
 
@@ -96,11 +147,8 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
     companion object {
-        private const val REQUIRED_PERMISSION = Manifest.permission.CAMERA
+        const val EXTRA_IMAGE = "extra_image"
+        const val EXTRA_RESULT = "extra_result"
     }
 }

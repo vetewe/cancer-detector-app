@@ -1,13 +1,36 @@
 <resources>
     <string name="app_name">Asclepius</string>
-    <string name="gallery">Gallery</string>
+    <string name="select_file">Select File</string>
     <string name="analyze">Analyze</string>
-    <string name="result">Result</string>
-    <string name="title_detect">Detect</string>
-    <string name="title_article">Article</string>
+    <string name="result"> Analyze Result</string>
+    <string name="title_home">Home</string>
     <string name="title_history">History</string>
     <string name="text1">Cancer Detector</string>
-    <string name="text2">Analyze Your Skin in Just One Click!</string>
-    <string name="empty_image_warning">Please insert the image file first.</string>
-
+    <string name="text2">Cancer Detector App For You</string>
+    <string name="text3">Prevent now for a peaceful tomorrow</string>
+    <string name="text4">Analyze Your Skin in Just One Click!</string>
+    <string name="text5">Detect Now!</string>
+    <string name="text6">Read Some Articles About Cancer</string>
+    <string name="text7">identify, recognize and prevent</string>
+    <string name="text8">The results of the detection are not completely accurate. Make sure the image is clearly visible to increase the accuracy of identification.</string>
+    <string name="back">Back</string>
+    <string name="save">Save</string>
+    <string name="text9">Your analysis history will be stored here</string>
+    <string name="article_title">Article Title</string>
+    <string name="published_date">Published Date</string>
+    <string name="author">Author</string>
+    <string name="delete">Delete</string>
+    <string name="analyze_date">Analyze Date</string>
+    <string name="analyze_result">Analyze Result</string>
+    <string name="text10">Can not load the articles</string>
+    <string name="text11">Failed to get the articles</string>
+    <string name="text13">Unknown view model class :</string>
+    <string name="text14">Crop function error</string>
+    <string name="text15">Photos not found</string>
+    <string name="text16">Select an image first</string>
+    <string name="text17">Unable to save analysis results, images and results not detected</string>
+    <string name="text18">Analysis result saved successfully!</string>
+    <string name="text19">Analysis results have been saved!</string>
+    <string name="text20">Saved at \n</string>
+    <string name="image_classifier_failed">Failed to proceed image classifier</string>
 </resources>
