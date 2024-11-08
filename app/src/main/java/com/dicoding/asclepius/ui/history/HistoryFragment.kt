@@ -74,6 +74,8 @@ class HistoryFragment : Fragment() {
                     GridLayoutManager(requireActivity(), 2).orientation
                 )
             )
+            setPadding(0, 0, 0, 200)
+            clipToPadding = false
         }
     }
 

@@ -52,19 +52,19 @@
                     android:textAlignment="center"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline4"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="@+id/guideline6"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/analyze_description"
-                    android:layout_width="380dp"
-                    android:layout_height="57dp"
+                    android:layout_width="360dp"
+                    android:layout_height="49dp"
                     android:layout_marginTop="4dp"
                     android:text="@string/text8"
                     android:textAlignment="center"
-                    app:layout_constraintEnd_toStartOf="@+id/guideline7"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline4"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="@+id/guideline6"
                     app:layout_constraintTop_toBottomOf="@+id/result_text"
@@ -94,7 +94,7 @@
                     android:textColor="@color/white"
                     app:icon="@drawable/ic_download"
                     app:iconTint="@color/white"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline4"
                     app:layout_constraintHorizontal_bias="0.666"
                     app:layout_constraintStart_toStartOf="@+id/guideline6"
                     app:layout_constraintTop_toBottomOf="@+id/analyze_description"
@@ -114,6 +114,13 @@
                     app:layout_constraintStart_toStartOf="@+id/guideline6"
                     app:layout_constraintTop_toBottomOf="@+id/analyze_description"
                     tools:ignore="TextContrastCheck" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/guideline4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="379dp" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 

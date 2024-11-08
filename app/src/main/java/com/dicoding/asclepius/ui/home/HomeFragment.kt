@@ -76,6 +76,8 @@ class HomeFragment : Fragment() {
                     LinearLayoutManager(requireActivity()).orientation
                 )
             )
+            setPadding(0, 0, 0, 200)
+            clipToPadding = false
         }
     }
 
